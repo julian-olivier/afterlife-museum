@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Threshold of Eternity: Mythological Geographies of the Afterlife</title>
+    <meta name="description" content="A Comparative Virtual Exhibition on Posthumous Realms across Five World Civilizations - An interactive 3D virtual museum exhibition exploring afterlife mythologies across Ancient Egypt, Ancient Greece, Norse Scandinavia, Han China, and Indigenous North America.">
+    <meta name="author" content="Student Scholar">
+    
+    <!-- Google Fonts: Editorial Serif + Crisp Modern Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main Exhibition Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+</head>
+<body class="museum-dark">
+
+    <!-- Top Navigation Bar -->
+    <header class="museum-header" id="header">
+        <div class="nav-container">
+            <div class="brand">
+                <span class="museum-badge">CLT 2375: Mythology & World Cultures</span>
+                <span class="brand-title">THE THRESHOLD OF ETERNITY</span>
+            </div>
+            
+            <nav class="nav-links" id="nav-menu">
+                <button class="nav-teleport-btn active" data-teleport="entrance">🏛️ Rotunda</button>
+                <button class="nav-teleport-btn" data-teleport="egypt">🪶 I: Egypt</button>
+                <button class="nav-teleport-btn" data-teleport="greece">🏺 II: Greece</button>
+                <button class="nav-teleport-btn" data-teleport="norse">⚔️ III: Norse</button>
+                <button class="nav-teleport-btn" data-teleport="china">📜 IV: China</button>
+                <button class="nav-teleport-btn" data-teleport="native">🌌 V: Native America</button>
+                <button class="nav-teleport-btn" data-teleport="synthesis">⚖️ Synthesis &amp; Sources</button>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle" title="Switch Gallery Lighting">
+                    <span id="theme-icon">🌙</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobile-toggle" aria-label="Toggle navigation menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================================================
+         PRIMARY 3D VIRTUAL MUSEUM VIEWPORT (GOOGLE EARTH STYLE)
+         ========================================================================== -->
+    <main id="museum-viewport-3d" class="museum-3d-wrapper">
+        <div id="museum-canvas-container" class="museum-3d-canvas"></div>
+
+        <!-- 3D HUD: Current Location Banner -->
+        <div class="hud-top-bar">
+            <div class="hud-location-badge">
+                <span class="hud-pin">📍</span>
+                <span id="hud-current-wing">Grand Rotunda: Curatorial Entrance &amp; Thesis</span>
+            </div>
+            <div class="hud-tour-controls">
+                <div id="hud-tour-timer-pill" class="hud-tour-timer-pill" aria-live="polite">
+                    <span class="timer-sand">⏳</span>
+                    <span id="hud-tour-timer-text">Next: <strong>Wing I: Egypt</strong> in <strong>9s</strong></span>
+                    <div class="hud-tour-progress"><div id="hud-tour-progress-fill" class="hud-tour-progress-bar"></div></div>
+                </div>
+                <button id="start-tour-btn" class="hud-tour-btn" title="Start automated cinematic tour through all wings">
+                    <span class="icon">🎬</span> Start Guided Tour
+                </button>
+            </div>
+        </div>
+
+        <!-- 3D HUD: Google Earth Style Interaction Hints -->
+        <div class="hud-controls-hint">
+            <div class="hint-pill highlight">
+                <span class="key-icon">🏛️</span> Select Any Wing on the Task Bar to Travel
+            </div>
+            <div class="hint-pill">
+                <span class="key-icon">🖱️</span> Click &amp; Drag to Look 360°
+            </div>
+            <div class="hint-pill">
+                <span class="key-icon">✦</span> Click Exhibit or Press <span class="key-combo">E</span> to Read
+            </div>
+        </div>
+
+        <!-- 3D HUD: Bottom Teleport Dock -->
+        <div class="hud-bottom-dock">
+            <div class="dock-container">
+                <span class="dock-label">SIGNIFICANT LOCATIONS:</span>
+                <button class="dock-btn active" data-teleport="entrance">🏛️ Rotunda</button>
+                <button class="dock-btn" data-teleport="egypt">🪶 Wing I: Egypt</button>
+                <button class="dock-btn" data-teleport="greece">🏺 Wing II: Greece</button>
+                <button class="dock-btn" data-teleport="norse">⚔️ Wing III: Norse</button>
+                <button class="dock-btn" data-teleport="china">📜 Wing IV: China</button>
+                <button class="dock-btn" data-teleport="native">🌌 Wing V: Native America</button>
+                <button class="dock-btn" data-teleport="synthesis">⚖️ Synthesis &amp; Sources</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         CURATORIAL READING & ARTIFACT LIGHTBOX MODAL
+         Triggered by clicking any 3D exhibit in the museum
+         ========================================================================== -->
+    <div id="artifact-modal" class="modal-backdrop" aria-hidden="true" role="dialog">
+        <div class="modal-container">
+            <button class="modal-close-btn" id="modal-close" aria-label="Close Lightbox">&times;</button>
+            <div class="modal-content">
+                <div class="modal-image-col">
+                    <div class="modal-img-wrap">
+                        <img id="modal-img" src="" alt="Artifact Lightbox View">
+                    </div>
+                    <div class="modal-controls">
+                        <button id="zoom-in-btn" class="ctrl-btn" title="Zoom In">+</button>
+                        <button id="zoom-out-btn" class="ctrl-btn" title="Zoom Out">−</button>
+                        <button id="zoom-reset-btn" class="ctrl-btn" title="Reset Zoom">Reset</button>
+                    </div>
+                </div>
+                <div class="modal-info-col">
+                    <span class="modal-wing-badge" id="modal-wing-badge">Wing I</span>
+                    <h3 id="modal-title" class="modal-artifact-title">Artifact Title</h3>
+                    
+                    <dl class="modal-meta-list">
+                        <div><dt>Culture / Origin:</dt> <dd id="modal-culture">Culture</dd></div>
+                        <div><dt>Period / Date:</dt> <dd id="modal-date">Date</dd></div>
+                        <div><dt>Medium / Materials:</dt> <dd id="modal-medium">Medium</dd></div>
+                        <div><dt>Dimensions:</dt> <dd id="modal-dimensions">Dimensions</dd></div>
+                        <div><dt>Repository / Accession:</dt> <dd id="modal-repository">Repository</dd></div>
+                    </dl>
+
+                    <div class="modal-analysis-box">
+                        <h4>Mythological &amp; Societal Analysis</h4>
+                        <div id="modal-scholarly-text" class="scholarly-full-text"></div>
+                    </div>
+
+                    <div class="modal-analysis-box">
+                        <h4>Visual &amp; Thematic Connection</h4>
+                        <p id="modal-analysis">Analysis text</p>
+                    </div>
+
+                    <div class="modal-actions-row">
+                        <button class="modal-next-btn" id="modal-next-btn">Next Exhibition Wing ➔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CENTRAL THESIS MODAL (TRIGGERED WHEN CLICKING ROTUNDA MONUMENT) -->
+    <div id="thesis-modal" class="modal-backdrop" aria-hidden="true" role="dialog">
+        <div class="modal-container thesis-modal-box">
+            <button class="modal-close-btn" id="thesis-modal-close" aria-label="Close Thesis Modal">&times;</button>
+            <div class="thesis-modal-content">
+                <div class="plaque-header">
+                    <span class="gold-icon">🏛️</span>
+                    <span class="plaque-tag">CURATORIAL THESIS &amp; FRAMEWORK</span>
+                </div>
+                <h2 class="thesis-modal-title">The Threshold of Eternity: Mythological Geographies of the Afterlife</h2>
+                <p class="thesis-modal-subtitle">A Comparative Virtual Exhibition on Posthumous Realms across Five World Civilizations</p>
+                
+                <div class="thesis-highlight-card">
+                    <h3>Thesis Statement</h3>
+                    <p>Across world mythologies, visions of the afterlife function as cultural blueprints reflecting each society's socioeconomic structures, moral imperatives, and physical environments. While Ancient Egypt envisioned the afterlife as an eternal, bureaucratic restoration of agricultural and cosmic harmony (ma'at) contingent upon moral rectitude, Ancient Greece conceptualized Hades as a somber, shadowy realm where insubstantial shades mourned lost vitality, elevating earthly civic renown (kleos) above posthumous existence. In contrast, Norse myth reflected an unyielding martial ethos and subarctic fatalism by dividing the dead between the glorious hall of Valhalla for slain champions destined for Ragnarök and the gloomy subterranean realm of Hel for the undistinguished. In Han China, the dual-soul cosmology (hun and po) mirrored imperial administrative order and filial duty (xiao), sending one soul to celestial paradises while anchoring the other to ancestral offerings within the tomb. Finally, Indigenous North American cosmologies, preserved in Mississippian iconography and Lakota traditions of the Path of Souls (Wanagi Tacanku), framed postmortem transition not as punitive retribution, but as a continuous relational journey along the Milky Way, reuniting the deceased with ancestral kin and the cyclical web of life.</p>
+                </div>
+
+                <div class="curatorial-intro-block">
+                    <h3>Exhibition Introduction</h3>
+                    <p>Death represents humanity's universal biological certainty, yet its mythological conceptualization remains profoundly culturally specific. Afterlife narratives are rarely idle theological speculations; they are ideological projections through which civilizations codify their deepest communal values, political institutions, and ecological realities. When a culture constructs an imaginary realm for the deceased, it invariably rebuilds the architecture of its living world—reinscribing its social hierarchies, anxieties, and concepts of justice across eternity. By investigating the eschatological traditions of Ancient Egypt, Ancient Greece, Norse Scandinavia, Han Dynasty China, and Indigenous North America (specifically Mississippian and Lakota cosmologies), this virtual exhibit examines how geography, governance, and social organization shape the human imagination of the eternal unknown.</p>
+                </div>
+
+                <div class="framework-summary-grid">
+                    <div class="fw-card">
+                        <span class="fw-num">I</span>
+                        <h4>Ancient Egypt</h4>
+                        <p>Restoration of cosmic harmony (<em>ma'at</em>); moral judgment via Weighing of the Heart.</p>
+                    </div>
+                    <div class="fw-card">
+                        <span class="fw-num">II</span>
+                        <h4>Ancient Greece</h4>
+                        <p>Shadowy Hades; insubstantial shades elevating mortal civic glory (<em>kleos</em>).</p>
+                    </div>
+                    <div class="fw-card">
+                        <span class="fw-num">III</span>
+                        <h4>Norse Mythology</h4>
+                        <p>Martial fatalism; einherjar summoned to Valhalla for doom at Ragnarök.</p>
+                    </div>
+                    <div class="fw-card">
+                        <span class="fw-num">IV</span>
+                        <h4>Ancient China</h4>
+                        <p>Dual soul (<em>hun</em> &amp; <em>po</em>); Han imperial bureaucracy &amp; filial piety (<em>xiao</em>).</p>
+                    </div>
+                    <div class="fw-card">
+                        <span class="fw-num">V</span>
+                        <h4>Native North America</h4>
+                        <p>Celestial Path of Souls (<em>Wanagi Tacanku</em>); living relational web across the cosmos.</p>
+                    </div>
+                </div>
+
+                <div class="modal-actions-row">
+                    <button class="modal-next-btn" onclick="document.getElementById('thesis-modal').classList.remove('open'); document.body.classList.remove('modal-active'); if(window.museumInstance) { window.museumInstance.resumeTourFromInspection(); window.museumInstance.teleportTo('egypt'); }">Enter Wing I: Ancient Egypt ➔</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SYNTHESIS & WORKS CITED MODAL (TRIGGERED WHEN CLICKING SYNTHESIS BOARD) -->
+    <div id="synthesis-modal" class="modal-backdrop" aria-hidden="true" role="dialog">
+        <div class="modal-container synthesis-modal-box">
+            <button class="modal-close-btn" id="synthesis-modal-close" aria-label="Close Synthesis Modal">&times;</button>
+            <div class="synthesis-modal-content">
+                <div class="plaque-header">
+                    <span class="gold-icon">⚖️</span>
+                    <span class="plaque-tag">COMPARATIVE SYNTHESIS &amp; WORKS CITED</span>
+                </div>
+                <h2 class="thesis-modal-title">Comparative Curatorial Synthesis &amp; Conclusion</h2>
+                
+                <div class="synthesis-text-block">
+    <p class='scholarly-p'>A comparative curatorial analysis of Ancient Egypt, Ancient Greece, Norse Scandinavia, Han China, and Indigenous North America demonstrates that human visions of the afterlife are deeply anchored in the earthly realities that produced them. Eschatological structures consistently reflect two vital variables: the sociopolitical organization of the living civilization and its environmental relationship with nature.</p><p class='scholarly-p'>In bureaucratic societies like Ancient Egypt and Han China, postmortem realms took the form of structured administrative and legal systems. Both traditions relied on written records, judicial hearings, and formal protocols. However, while Egypt emphasized individual moral accountability through the Weighing of the Heart, Han China emphasized kinship duty and ancestral sacrifice, wherein the comfort of the deceased depended upon ongoing filial veneration. Conversely, in the combative, decentralized landscapes of Ancient Greece and Norse Scandinavia, judicial bureaucracy was replaced by tragic and martial realism. For the Greeks, the gloom of Hades prompted heroes to treasure mortal civic renown (kleos) above shadowy death. For the Norse, the relentless fatalism of a subarctic environment culminated in the martial ideal of Valhalla, where slain warriors prepared for unavoidable doom at Ragnarök.</p><p class='scholarly-p'>Finally, Indigenous North American traditions—such as Mississippian cosmological iconography and the Lakota Path of Souls—departed completely from punitive models of salvation and damnation. Instead, they framed death as an ongoing relational migration along the Milky Way, celebrating kinship continuity across a living cosmos. Ultimately, in constructing their landscapes of eternity, world cultures did not escape mortal reality; rather, they monumentalized their highest earthly values, deepest fears, and enduring quest for existential meaning.</p>
+                </div>
+
+                <h3 class="modal-subheading">Works Cited (MLA 9th Edition)</h3>
+                <p class="modal-subtext">Incorporating 14 peer-reviewed scholarly monographs, university press books, and classical primary epics.</p>
+
+                <div class="modal-bibliography-list">
+    
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">Cornell University Press</span>
+                            <button class="copy-cit-btn" data-cit="Assmann, Jan. Death and Salvation in Ancient Egypt. Translated by David Lorton, Cornell University Press, 2005." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Assmann, Jan. Death and Salvation in Ancient Egypt. Translated by David Lorton, Cornell University Press, 2005.</p>
+                        <p class="citation-annotation"><em>Context:</em> Authoritative study of Egyptian mortuary literature, the theology of Ma'at, and the cultural transformation of death into eternal order.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">Harvard University Press</span>
+                            <button class="copy-cit-btn" data-cit="Burkert, Walter. Greek Religion: Archaic and Classical. Translated by John Raffan, Harvard University Press, 1985." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Burkert, Walter. Greek Religion: Archaic and Classical. Translated by John Raffan, Harvard University Press, 1985.</p>
+                        <p class="citation-annotation"><em>Context:</em> Seminal academic overview of archaic and classical Greek religious rituals, funerary customs, and conceptions of the underworld.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Monograph</span>
+                            <span class="pub-press-badge">Fulcrum Publishing</span>
+                            <button class="copy-cit-btn" data-cit="Deloria, Vine, Jr. God Is Red: A Native View of Religion. 30th anniversary ed., Fulcrum Publishing, 2003." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Deloria, Vine, Jr. God Is Red: A Native View of Religion. 30th anniversary ed., Fulcrum Publishing, 2003.</p>
+                        <p class="citation-annotation"><em>Context:</em> Foundational critique contrasting Western punitive linear theology with Indigenous spatial, relational, and ancestral cosmologies.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">Cambridge University Press</span>
+                            <button class="copy-cit-btn" data-cit="Ellis Davidson, Hilda Roderick. The Road to Hel: A Study of the Conception of the Dead in Old Norse Literature. Cambridge University Press, 1943." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Ellis Davidson, Hilda Roderick. The Road to Hel: A Study of the Conception of the Dead in Old Norse Literature. Cambridge University Press, 1943.</p>
+                        <p class="citation-annotation"><em>Context:</em> Comprehensive Cambridge monograph analyzing Scandinavian mortuary archaeology, the Norse soul, and literary visions of Valhalla and Helheim.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">University of Illinois Press</span>
+                            <button class="copy-cit-btn" data-cit="Hall, Robert L. An Archaeology of the Soul: North American Indian Belief and Ritual. University of Illinois Press, 1997." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Hall, Robert L. An Archaeology of the Soul: North American Indian Belief and Ritual. University of Illinois Press, 1997.</p>
+                        <p class="citation-annotation"><em>Context:</em> Pioneering archaeological analysis connecting Mississippian iconography, the Path of Souls along the Milky Way, and Native ceremonialism.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Primary Classical Epic</span>
+                            <span class="pub-press-badge">Harper & Row</span>
+                            <button class="copy-cit-btn" data-cit="Homer. The Odyssey. Translated by Richmond Lattimore, Harper & Row, 1967." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Homer. The Odyssey. Translated by Richmond Lattimore, Harper & Row, 1967.</p>
+                        <p class="citation-annotation"><em>Context:</em> Primary epic text for Greek underworld beliefs, the insubstantial Homeric shade (psyche), and Achilles' Nekyia testimony in Book 11.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">Cornell University Press</span>
+                            <button class="copy-cit-btn" data-cit="Hornung, Erik. The Ancient Egyptian Books of the Afterlife. Translated by David Lorton, Cornell University Press, 1999." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Hornung, Erik. The Ancient Egyptian Books of the Afterlife. Translated by David Lorton, Cornell University Press, 1999.</p>
+                        <p class="citation-annotation"><em>Context:</em> Standard scholarly text on the subterranean topography of the Duat, Amduat registers, and the judgment of Osiris in New Kingdom tombs.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">University of Alabama Press</span>
+                            <button class="copy-cit-btn" data-cit="Lankford, George E. Looking for Lost Lore: Studies in Folklore, Ethnology, and Iconography of the American Southeast. University of Alabama Press, 2008." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Lankford, George E. Looking for Lost Lore: Studies in Folklore, Ethnology, and Iconography of the American Southeast. University of Alabama Press, 2008.</p>
+                        <p class="citation-annotation"><em>Context:</em> Iconographic investigation of Mississippian marine shell gorgets, the cosmic oculus portal, and celestial journeys in Southeastern lore.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">Oxford University Press</span>
+                            <button class="copy-cit-btn" data-cit="Lindow, John. Norse Mythology: A Guide to the Gods, Heroes, Rituals, and Beliefs. Oxford University Press, 2001." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Lindow, John. Norse Mythology: A Guide to the Gods, Heroes, Rituals, and Beliefs. Oxford University Press, 2001.</p>
+                        <p class="citation-annotation"><em>Context:</em> Authoritative Oxford handbook detailing Norse cosmology, Odin's recruitment of the einherjar, and the apocalyptic climax of Ragnarök.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">George Allen & Unwin</span>
+                            <button class="copy-cit-btn" data-cit="Loewe, Michael. Ways to Paradise: The Chinese Quest for Immortality. George Allen & Unwin, 1979." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Loewe, Michael. Ways to Paradise: The Chinese Quest for Immortality. George Allen & Unwin, 1979.</p>
+                        <p class="citation-annotation"><em>Context:</em> Classic study of Han Dynasty funerary banners, the iconography of Mawangdui Tomb No. 1, and the cult of the Queen Mother of the West.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">State University of New York Press</span>
+                            <button class="copy-cit-btn" data-cit="Poo, Mu-chou. In Search of Personal Welfare: A View of Ancient Chinese Religion. State University of New York Press, 1998." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Poo, Mu-chou. In Search of Personal Welfare: A View of Ancient Chinese Religion. State University of New York Press, 1998.</p>
+                        <p class="citation-annotation"><em>Context:</em> Scholarly investigation into popular Han mortuary religion, the division of the hun and po souls, and rituals safeguarding against hungry ghosts.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">Oxford University Press</span>
+                            <button class="copy-cit-btn" data-cit="Sourvinou-Inwood, Christiane. 'Reading' Greek Death: To the End of the Classical Period. Oxford University Press, 1995." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Sourvinou-Inwood, Christiane. 'Reading' Greek Death: To the End of the Classical Period. Oxford University Press, 1995.</p>
+                        <p class="citation-annotation"><em>Context:</em> Exhaustive cultural and iconographic examination of archaic and classical Greek grave goods, funerary lekythoi, and the evolution of Hades.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">Princeton University Press</span>
+                            <button class="copy-cit-btn" data-cit="Vernant, Jean-Pierre. Mortals and Immortals: Collected Essays. Edited by Froma I. Zeitlin, Princeton University Press, 1991." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Vernant, Jean-Pierre. Mortals and Immortals: Collected Essays. Edited by Froma I. Zeitlin, Princeton University Press, 1991.</p>
+                        <p class="citation-annotation"><em>Context:</em> Foundational structuralist analysis of the Greek body, the Homeric psyche, and the cultural construction of heroic memory in the polis.</p>
+                    </div>
+        
+                    <div class="citation-card">
+                        <div class="citation-header">
+                            <span class="pub-type-badge">Peer-Reviewed Scholarly Book</span>
+                            <span class="pub-press-badge">University of Hawaii Press</span>
+                            <button class="copy-cit-btn" data-cit="Wu, Hung. The Art of the Yellow Springs: Understanding Chinese Tombs. University of Hawaii Press, 2010." title="Copy MLA Citation">
+                                <span class="copy-icon">📋</span> Copy MLA
+                            </button>
+                        </div>
+                        <p class="citation-text">Wu, Hung. The Art of the Yellow Springs: Understanding Chinese Tombs. University of Hawaii Press, 2010.</p>
+                        <p class="citation-annotation"><em>Context:</em> Major art-historical study of Han burial architecture, mingqi offerings, and visual spatializations of the subterranean Yellow Springs.</p>
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js 3D Engine & Libraries -->
+    <script src="assets/js/three.min.js"></script>
+    <script src="assets/js/OrbitControls.js"></script>
+    <script src="assets/js/tween.umd.js"></script>
+    <script src="assets/js/artifact_textures.js"></script>
+    <script src="assets/js/museum3d.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
